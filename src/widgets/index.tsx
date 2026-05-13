@@ -4,23 +4,23 @@ import '../index.css'; // import <widget-name>.css
 
 async function onActivate(plugin: ReactRNPlugin) {
   // Register settings
-  await plugin.settings.registerStringSetting({
-    id: 'name',
-    title: 'What is your Name?',
-    defaultValue: 'Bob',
-  });
-
-  await plugin.settings.registerBooleanSetting({
-    id: 'pizza',
-    title: 'Do you like pizza?',
-    defaultValue: true,
-  });
-
-  await plugin.settings.registerNumberSetting({
-    id: 'favorite-number',
-    title: 'What is your favorite number?',
-    defaultValue: 42,
-  });
+  await Promise.all([
+    plugin.settings.registerStringSetting({
+      id: 'name',
+      title: 'What is your Name?',
+      defaultValue: 'Bob',
+    }),
+    plugin.settings.registerBooleanSetting({
+      id: 'pizza',
+      title: 'Do you like pizza?',
+      defaultValue: true,
+    }),
+    plugin.settings.registerNumberSetting({
+      id: 'favorite-number',
+      title: 'What is your favorite number?',
+      defaultValue: 42,
+    }),
+  ]);
 
   // A command that inserts text into the editor if focused.
   await plugin.app.registerCommand({
