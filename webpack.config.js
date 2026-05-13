@@ -116,9 +116,26 @@ if (isProd) {
     hot: true,
     compress: true,
     watchFiles: ['src/*'],
-    headers: {
-      'Access-Control-Allow-Origin': '*',
-      'Access-Control-Allow-Headers': 'baggage, sentry-trace',
+    headers: (req, res, context) => {
+      const allowedOrigins = [
+        'https://www.remnote.com',
+        'https://remnote.com',
+        'https://remnote.io',
+      ];
+      const origin = req.headers.origin;
+      const headers = {
+        'Access-Control-Allow-Headers': 'baggage, sentry-trace',
+      };
+
+      if (
+        allowedOrigins.includes(origin) ||
+        (origin && (origin.startsWith('http://localhost:') || origin.startsWith('http://127.0.0.1:')))
+      ) {
+        headers['Access-Control-Allow-Origin'] = origin;
+        headers['Vary'] = 'Origin';
+      }
+
+      return headers;
     },
   };
 }
