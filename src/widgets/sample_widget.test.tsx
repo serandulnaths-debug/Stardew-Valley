@@ -1,6 +1,6 @@
-import React from 'react';
+
 import { render, screen } from '@testing-library/react';
-import { SampleWidget } from './sample_widget';
+import { SampleWidget } from './sample_widget.tsx';
 import { usePlugin, useTracker } from '@remnote/plugin-sdk';
 
 jest.mock('@remnote/plugin-sdk', () => ({

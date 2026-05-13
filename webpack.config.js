@@ -1,6 +1,6 @@
 const { resolve } = require('path');
-var glob = require('glob');
-var path = require('path');
+const glob = require('glob');
+const path = require('path');
 
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const { ESBuildMinifyPlugin } = require('esbuild-loader');
@@ -10,6 +10,7 @@ const ReactRefreshWebpackPlugin = require('@pmmmwh/react-refresh-webpack-plugin'
 
 const CopyPlugin = require('copy-webpack-plugin');
 
+// deno-lint-ignore no-process-global
 const isProd = process.env.NODE_ENV === 'production';
 const isDevelopment = !isProd;
 
