@@ -1,3 +1,4 @@
+import React from "react";
 import { usePlugin, renderWidget, useTracker } from '@remnote/plugin-sdk';
 
 export const SampleWidget = () => {
