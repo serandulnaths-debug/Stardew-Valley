@@ -6,7 +6,8 @@
   "scripts": {
     "check-types": "tsc",
     "dev": "cross-env NODE_ENV=development webpack-dev-server --color --progress --no-open",
-    "build": "npx remnote-plugin validate && shx rm -rf dist && cross-env NODE_ENV=production webpack --color --progress && cd dist && bestzip ../PluginZip.zip ./*"
+    "build": "npx remnote-plugin validate && shx rm -rf dist && cross-env NODE_ENV=production webpack --color --progress && cd dist && bestzip ../PluginZip.zip ./*",
+    "test": "jest"
   },
   "dependencies": {
     "@remnote/plugin-sdk": "latest",
@@ -15,9 +16,13 @@
   },
   "devDependencies": {
     "@pmmmwh/react-refresh-webpack-plugin": "^0.5.7",
+    "@testing-library/jest-dom": "^6.9.1",
+    "@testing-library/react": "^12.1.5",
+    "@types/jest": "^30.0.0",
     "@types/node": "^18.0.3",
     "@types/react": "^17.0.2",
     "@types/react-dom": "^17.0.2",
+    "@types/testing-library__jest-dom": "^5.14.9",
     "autoprefixer": "^10.4.7",
     "bestzip": "^2.2.1",
     "concurrently": "^7.2.2",
@@ -26,6 +31,8 @@
     "css-loader": "^6.7.1",
     "esbuild-loader": "^2.19.0",
     "html-webpack-plugin": "^5.5.0",
+    "jest": "^30.4.2",
+    "jest-environment-jsdom": "^30.4.1",
     "mini-css-extract-plugin": "^2.6.1",
     "postcss": "^8.4.14",
     "postcss-import": "^14.1.0",
@@ -34,6 +41,7 @@
     "shx": "^0.3.4",
     "style-loader": "^3.3.1",
     "tailwindcss": "^3.1.5",
+    "ts-jest": "^29.4.9",
     "ts-node": "^10.9.1",
     "typescript": "^4.7.4",
     "webpack": "^5.73.0",
