@@ -9,6 +9,7 @@ const ReactRefreshWebpackPlugin = require('@pmmmwh/react-refresh-webpack-plugin'
 
 const CopyPlugin = require('copy-webpack-plugin');
 
+// deno-lint-ignore no-node-globals
 const isProd = process.env.NODE_ENV === 'production';
 const isDevelopment = !isProd;
 
@@ -119,7 +120,7 @@ if (isProd) {
     hot: true,
     compress: true,
     watchFiles: ['src/*'],
-    headers: (req, res, context) => {
+    headers: (req, _res, _context) => {
       const allowedOrigins = [
         'https://www.remnote.com',
         'https://remnote.com',
@@ -137,7 +138,7 @@ if (isProd) {
           isLocalhost =
             (originUrl.hostname === 'localhost' || originUrl.hostname === '127.0.0.1') &&
             (originUrl.protocol === 'http:' || originUrl.protocol === 'https:');
-        } catch (e) {
+        } catch (_e) {
           // Invalid URL
         }
       }
