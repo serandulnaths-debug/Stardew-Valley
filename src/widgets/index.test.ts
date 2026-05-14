@@ -3,11 +3,12 @@ import { onActivate, onDeactivate } from './index';
 import { WidgetLocation } from '@remnote/plugin-sdk';
 
 describe('Plugin Activation', () => {
-  let mockPlugin: any;
+  let mockPlugin: Parameters<typeof onActivate>[0];
 
   beforeEach(() => {
     // Reset mocks before each test
-    mockPlugin = {
+    mockPlugin = {} as any;
+    Object.assign(mockPlugin, {
       settings: {
         registerStringSetting: vi.fn().mockResolvedValue(undefined),
         registerBooleanSetting: vi.fn().mockResolvedValue(undefined),
@@ -21,7 +22,7 @@ describe('Plugin Activation', () => {
       editor: {
         insertPlainText: vi.fn().mockResolvedValue(undefined),
       },
-    };
+    });
   });
 
   it('should register settings, commands, and widgets on activation', async () => {
@@ -56,8 +57,10 @@ describe('Plugin Activation', () => {
     );
 
     // Test the action function of the registered command
-    const commandCall = mockPlugin.app.registerCommand.mock.calls[0][0];
-    await commandCall.action();
+    const commandCall = vi.mocked(mockPlugin.app.registerCommand).mock.calls[0][0];
+    if (typeof commandCall.action === "function") {
+      await commandCall.action();
+    }
     expect(mockPlugin.editor.insertPlainText).toHaveBeenCalledWith('Hello World!');
 
     // Assert Toast
