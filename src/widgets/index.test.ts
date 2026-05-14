@@ -7,7 +7,7 @@ describe('Plugin Activation', () => {
 
   beforeEach(() => {
     // Reset mocks before each test
-    mockPlugin = {} as any;
+    mockPlugin = {} as Parameters<typeof onActivate>[0];
     Object.assign(mockPlugin, {
       settings: {
         registerStringSetting: vi.fn().mockResolvedValue(undefined),
