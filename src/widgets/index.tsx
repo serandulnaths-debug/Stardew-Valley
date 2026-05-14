@@ -2,7 +2,7 @@ import { declareIndexPlugin, type ReactRNPlugin, WidgetLocation } from '@remnote
 import '../style.css';
 import '../index.css'; // import <widget-name>.css
 
-async function onActivate(plugin: ReactRNPlugin) {
+export async function onActivate(plugin: ReactRNPlugin) {
   // Register settings
   await plugin.settings.registerStringSetting({
     id: 'name',
@@ -40,6 +40,6 @@ async function onActivate(plugin: ReactRNPlugin) {
   });
 }
 
-async function onDeactivate(_: ReactRNPlugin) {}
+export async function onDeactivate(_: ReactRNPlugin) {}
 
 declareIndexPlugin(onActivate, onDeactivate);
