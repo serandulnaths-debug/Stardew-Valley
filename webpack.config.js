@@ -9,6 +9,7 @@ const ReactRefreshWebpackPlugin = require('@pmmmwh/react-refresh-webpack-plugin'
 
 const CopyPlugin = require('copy-webpack-plugin');
 
+// deno-lint-ignore no-node-globals
 const isProd = process.env.NODE_ENV === 'production';
 const isDevelopment = !isProd;
 
@@ -71,12 +72,16 @@ const config = {
       const urlSearchParams = new URLSearchParams(window.location.search);
       const queryParams = Object.fromEntries(urlSearchParams.entries());
       const widgetName = queryParams["widgetName"];
-      if (widgetName == undefined) {document.body.innerHTML+="Widget ID not specified."}
-
-      const s = document.createElement('script');
-      s.type = "module";
-      s.src = widgetName+"${SANDBOX_SUFFIX}.js";
-      document.body.appendChild(s);
+      if (widgetName == undefined) {
+        document.body.innerHTML+="Widget ID not specified.";
+      } else if (!/^[a-zA-Z0-9_-]+(\\/[a-zA-Z0-9_-]+)*$/.test(widgetName)) {
+        document.body.innerHTML+="Invalid Widget ID.";
+      } else {
+        const s = document.createElement('script');
+        s.type = "module";
+        s.src = widgetName+"${SANDBOX_SUFFIX}.js";
+        document.body.appendChild(s);
+      }
       </script>
     `,
       filename: 'index.html',
@@ -115,7 +120,7 @@ if (isProd) {
     hot: true,
     compress: true,
     watchFiles: ['src/*'],
-    headers: (req, res, context) => {
+    headers: (req, _res, _context) => {
       const allowedOrigins = [
         'https://www.remnote.com',
         'https://remnote.com',
@@ -126,10 +131,19 @@ if (isProd) {
         'Access-Control-Allow-Headers': 'baggage, sentry-trace',
       };
 
-      if (
-        allowedOrigins.includes(origin) ||
-        (origin && (origin.startsWith('http://localhost:') || origin.startsWith('http://127.0.0.1:')))
-      ) {
+      let isLocalhost = false;
+      if (origin) {
+        try {
+          const originUrl = new URL(origin);
+          isLocalhost =
+            (originUrl.hostname === 'localhost' || originUrl.hostname === '127.0.0.1') &&
+            (originUrl.protocol === 'http:' || originUrl.protocol === 'https:');
+        } catch (_e) {
+          // Invalid URL
+        }
+      }
+
+      if (allowedOrigins.includes(origin) || isLocalhost) {
         headers['Access-Control-Allow-Origin'] = origin;
         headers['Vary'] = 'Origin';
       }

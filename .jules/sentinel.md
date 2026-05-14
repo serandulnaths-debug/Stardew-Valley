@@ -1,0 +1,4 @@
+## 2026-05-14 - [Arbitrary Script Inclusion via widgetName & CORS bypass in devServer]
+**Vulnerability:** The dev server allowed overly permissive CORS for origins starting with 'http://localhost:' and the webpack config dynamically included a script source from the 'widgetName' URL parameter without any validation.
+**Learning:** This could allow an attacker to bypass CORS using domain spoofing (e.g. http://localhost.attacker.com) and achieve XSS via the 'widgetName' parameter in index.html. When injecting scripts dynamically in a template literal using regex validation inside HtmlWebpackPlugin, careful escaping of regex backslashes is necessary.
+**Prevention:** Strictly validate CORS using the URL class and validate untrusted input (widgetName) using an explicit regex check before execution.
