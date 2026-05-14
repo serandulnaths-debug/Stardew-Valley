@@ -1,7 +1,6 @@
 const process = require('node:process');
-const { resolve } = require('path');
-const glob = require('glob');
 const path = require('path');
+const glob = require('glob');
 
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const { ESBuildMinifyPlugin } = require('esbuild-loader');
@@ -37,7 +36,7 @@ const config = {
   entry: entryPoints,
 
   output: {
-    path: resolve(__dirname, 'dist'),
+    path: path.resolve(__dirname, 'dist'),
     filename: `[name].js`,
     publicPath: '',
   },
@@ -127,9 +126,26 @@ if (isProd) {
     hot: true,
     compress: true,
     watchFiles: ['src/*'],
-    headers: {
-      'Access-Control-Allow-Origin': '*',
-      'Access-Control-Allow-Headers': 'baggage, sentry-trace',
+    headers: (req, _res, _context) => {
+      const allowedOrigins = [
+        'https://www.remnote.com',
+        'https://remnote.com',
+        'https://remnote.io',
+      ];
+      const origin = req.headers.origin;
+      const headers = {
+        'Access-Control-Allow-Headers': 'baggage, sentry-trace',
+      };
+
+      if (
+        allowedOrigins.includes(origin) ||
+        (origin && (origin.startsWith('http://localhost:') || origin.startsWith('http://127.0.0.1:')))
+      ) {
+        headers['Access-Control-Allow-Origin'] = origin;
+        headers['Vary'] = 'Origin';
+      }
+
+      return headers;
     },
   };
 }
