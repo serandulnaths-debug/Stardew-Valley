@@ -118,10 +118,10 @@ if (isProd) {
     hot: true,
     compress: true,
     watchFiles: ['src/*'],
-    headers: {
+    headers: (_req, _res, _context) => ({
       'Access-Control-Allow-Origin': '*',
       'Access-Control-Allow-Headers': 'baggage, sentry-trace',
-    },
+    }),
   };
 }
 
