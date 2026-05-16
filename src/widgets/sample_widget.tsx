@@ -8,13 +8,16 @@ export const SampleWidget = () => {
   let favoriteNumber = useTracker(() => plugin.settings.getSetting<number>('favorite-number'));
 
   return (
-    <div className="p-2 m-2 rounded-lg rn-clr-background-light-positive rn-clr-content-positive">
-      <h1 className="text-xl">Sample Plugin</h1>
-      <div>
-        Hi {name}, you {!!likesPizza ? 'do' : "don't"} like pizza and your favorite number is{' '}
-        {favoriteNumber}!
-      </div>
-    </div>
+    <section
+      className="p-2 m-2 rounded-lg rn-clr-background-light-positive rn-clr-content-positive"
+      aria-labelledby="sample-plugin-heading"
+    >
+      <h1 id="sample-plugin-heading" className="text-xl font-bold mb-2">Sample Plugin</h1>
+      <p className="text-sm">
+        Hi {name || 'there'}, you {!!likesPizza ? 'do' : "don't"} like pizza and your favorite number is{' '}
+        {favoriteNumber ?? 'unknown'}!
+      </p>
+    </section>
   );
 };
 
