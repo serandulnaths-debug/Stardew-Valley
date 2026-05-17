@@ -24,8 +24,8 @@ const config = {
       .replace(/\.[tj]sx?$/, '')
       .replace(/\\/g, '/');
 
-    obj[rel] = el;
-    obj[`${rel}${SANDBOX_SUFFIX}`] = el;
+    obj[rel] = el.startsWith('./') ? el : './' + el;
+    obj[`${rel}${SANDBOX_SUFFIX}`] = el.startsWith('./') ? el : './' + el;
     return obj;
   }, {}),
 
@@ -65,20 +65,29 @@ const config = {
           filename: '[name].css',
         }),
     new HtmlWebpackPlugin({
-      templateContent: `
+      templateContent: () => {
+        const entryObj = config.entry;
+        const validWidgetNames = Object.keys(entryObj).filter(name => !name.endsWith(SANDBOX_SUFFIX));
+        return `
       <body></body>
       <script type="text/javascript">
       const urlSearchParams = new URLSearchParams(window.location.search);
       const queryParams = Object.fromEntries(urlSearchParams.entries());
       const widgetName = queryParams["widgetName"];
-      if (widgetName == undefined) {document.body.innerHTML+="Widget ID not specified."}
-
-      const s = document.createElement('script');
-      s.type = "module";
-      s.src = widgetName+"${SANDBOX_SUFFIX}.js";
-      document.body.appendChild(s);
+      const validWidgetNames = ${JSON.stringify(validWidgetNames)};
+      if (!widgetName) {
+        document.body.textContent = "Widget ID not specified.";
+      } else if (!validWidgetNames.includes(widgetName)) {
+        document.body.textContent = "Invalid Widget ID specified.";
+      } else {
+        const s = document.createElement('script');
+        s.type = "module";
+        s.src = widgetName+"${SANDBOX_SUFFIX}.js";
+        document.body.appendChild(s);
+      }
       </script>
-    `,
+    `;
+      },
       filename: 'index.html',
       inject: false,
     }),
