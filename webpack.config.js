@@ -24,8 +24,9 @@ const config = {
       .replace(/\.[tj]sx?$/, '')
       .replace(/\\/g, '/');
 
-    obj[rel] = el;
-    obj[`${rel}${SANDBOX_SUFFIX}`] = el;
+    const entryPath = el.startsWith('./') ? el : `./${el}`;
+    obj[rel] = entryPath;
+    obj[`${rel}${SANDBOX_SUFFIX}`] = entryPath;
     return obj;
   }, {}),
 
