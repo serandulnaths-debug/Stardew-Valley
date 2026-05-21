@@ -3,7 +3,7 @@
   "id": "plugin_template",
   "name": "Plugin Template",
   "author": "remnote",
-  "repoUrl": "https://github.com/remnote/remnote-plugin-template-react",
+  "repoUrl": "",
   "version": {
     "major": 0,
     "minor": 0,
