@@ -1,0 +1,4 @@
+## 2024-05-21 - [DOM XSS via Webpack Template Query Params]
+**Vulnerability:** The HTML Webpack Plugin template directly extracted the `widgetName` query parameter from the URL and appended it directly to the DOM using `document.body.innerHTML +=` without any validation or sanitization, allowing arbitrary JavaScript execution via a crafted `?widgetName=` URL parameter.
+**Learning:** Build-time inline templates can introduce runtime XSS if they dynamically inject URL parameters or unsanitized user inputs into sinks like `innerHTML`.
+**Prevention:** Avoid `innerHTML` entirely when displaying user-controlled text; use `textContent` instead. Additionally, maintain an allowlist of valid entries (in this case, dynamically generated during build from known widgets) and strictly validate query parameters against this list before using them in sensitive operations like dynamic script loading.
