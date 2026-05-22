@@ -1,0 +1,6 @@
+## 2024-05-18 - Prevent DOM-based XSS in Widget Loader
+**Vulnerability:** The HTML template in `webpack.config.js` was reading the `widgetName` parameter directly from the URL query string and appending it directly to the DOM via `document.body.innerHTML += ...` (in the missing parameter case) and injecting it into the `script.src` attribute without validation. This created a DOM-based XSS risk if a user was tricked into visiting a URL with a maliciously crafted `widgetName`.
+**Learning:** Because Webpack serves entry points dynamically based on URL query parameters (`?widgetName=...`), we must validate the requested parameter against the known set of valid entry points (chunks) generated at build-time. We must also never use `innerHTML` when rendering user-supplied input, even for simple error messages.
+**Prevention:**
+1. Use a build-time generated allowlist of valid `widgetName`s (derived from the Webpack entry keys) and strictly validate the requested `widgetName` against it before attempting to load any scripts.
+2. Replace `document.body.innerHTML += ...` with `document.body.textContent = ...` to ensure any unescaped characters are treated as plain text rather than executable HTML, preventing DOM-based XSS vectors.
