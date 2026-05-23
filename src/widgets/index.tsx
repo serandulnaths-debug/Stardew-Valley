@@ -27,7 +27,7 @@ async function onActivate(plugin: ReactRNPlugin) {
     id: 'editor-command',
     name: 'Editor Command',
     action: async () => {
-      plugin.editor.insertPlainText('Hello World!');
+      await plugin.editor.insertPlainText('Hello World!');
     },
   });
 
