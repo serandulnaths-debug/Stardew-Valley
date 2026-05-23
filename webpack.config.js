@@ -1,3 +1,4 @@
+const process = require('process');
 const path = require('path');
 const glob = require('glob');
 
@@ -24,8 +25,8 @@ const config = {
       .replace(/\.[tj]sx?$/, '')
       .replace(/\\/g, '/');
 
-    obj[rel] = el;
-    obj[`${rel}${SANDBOX_SUFFIX}`] = el;
+    obj[rel] = './' + el;
+    obj[`${rel}${SANDBOX_SUFFIX}`] = './' + el;
     return obj;
   }, {}),
 
@@ -115,7 +116,7 @@ if (isProd) {
     hot: true,
     compress: true,
     watchFiles: ['src/*'],
-    headers: (req, res, context) => {
+    headers: (req, _res, _context) => {
       const allowedOrigins = [
         'https://www.remnote.com',
         'https://remnote.com',
