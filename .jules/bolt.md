@@ -1,0 +1,3 @@
+## 2024-05-24 - Parallelize RemNote Plugin Activation
+**Learning:** In RemNote plugins, independent asynchronous registrations (like settings, commands, and widgets) in the `onActivate` function can and should be executed concurrently using `Promise.all`. Sequential `await` calls on each registration needlessly block the main thread and slow down the total plugin initialization time, which is a critical performance metric for plugins.
+**Action:** Always wrap independent initialization API calls within `Promise.all` in the `onActivate` hook to ensure the fastest possible startup time for the plugin.
