@@ -1,0 +1,3 @@
+## 2023-10-24 - Handle Async Plugin Settings Loading
+**Learning:** RemNote plugin settings load asynchronously, causing uninitialized variable rendering flashes. The UI needs explicit semantic fallback states (aria-live="polite", aria-busy="true") to handle initialization cleanly.
+**Action:** Always provide loading states and semantic HTML fallbacks for plugin UI components that depend on async tracker settings.
