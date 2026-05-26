@@ -1,0 +1,4 @@
+## 2025-02-18 - XSS and CORS Bypass in Webpack config
+**Vulnerability:** The Webpack configuration had two vulnerabilities: a DOM XSS via unvalidated `widgetName` injection in `HtmlWebpackPlugin`, and a CORS domain spoofing vulnerability where `origin.startsWith('http://localhost:')` would allow `http://localhost.attacker.com`.
+**Learning:** Development server configurations are often overlooked for security, allowing malicious scripts via URL parameters and bypassing CORS policies during local plugin development.
+**Prevention:** Strictly validate dynamically injected URL parameters against an allowlist in build templates, use `textContent` instead of `innerHTML` for DOM injection, and use the `URL` API (`new URL(origin).hostname`) to strictly validate CORS origins rather than string prefix matching.
