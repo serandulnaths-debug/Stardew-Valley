@@ -1,0 +1,4 @@
+## 2024-03-24 - DOM-based XSS in widget script injection
+**Vulnerability:** The Webpack configuration injected `widgetName` query parameters directly into the DOM (via `innerHTML` and dynamically creating script elements) without validation, which allowed DOM-based XSS attacks.
+**Learning:** Build tools that generate client-side entry points with user-controlled parameters must validate those parameters against known legitimate values before rendering or execution. Even seemingly harmless development servers or static generation processes can introduce client-side security gaps if unsanitized data reaches sinks.
+**Prevention:** Always validate user-provided parameters (such as script names/paths) against a server/build-generated allowlist, and use secure methods (e.g., `textContent` instead of `innerHTML`) for rendering error messages or arbitrary text to the DOM.

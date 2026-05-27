@@ -16,18 +16,26 @@ const fastRefresh = isDevelopment ? new ReactRefreshWebpackPlugin() : null;
 
 const SANDBOX_SUFFIX = '-sandbox';
 
+const entryPoints = glob.sync('./src/widgets/**/*.tsx').reduce((obj, el) => {
+  const rel = path
+    .relative(path.join(__dirname, 'src/widgets'), path.join(__dirname, el))
+    .replace(/\.[tj]sx?$/, '')
+    .replace(/\\/g, '/');
+
+  // Prefix file paths with './' relative to the directory where webpack is run
+  const relativeFilePath = './' + path.relative(__dirname, el).replace(/\\/g, '/');
+
+  obj[rel] = relativeFilePath;
+  obj[`${rel}${SANDBOX_SUFFIX}`] = relativeFilePath;
+  return obj;
+}, {});
+
+// Extract base widget names without the sandbox suffix
+const validWidgetNames = Object.keys(entryPoints).filter(name => !name.endsWith(SANDBOX_SUFFIX));
+
 const config = {
   mode: isProd ? 'production' : 'development',
-  entry: glob.sync('./src/widgets/**/*.tsx').reduce((obj, el) => {
-    const rel = path
-      .relative('src/widgets', el)
-      .replace(/\.[tj]sx?$/, '')
-      .replace(/\\/g, '/');
-
-    obj[rel] = el;
-    obj[`${rel}${SANDBOX_SUFFIX}`] = el;
-    return obj;
-  }, {}),
+  entry: entryPoints,
 
   output: {
     path: path.resolve(__dirname, 'dist'),
@@ -68,15 +76,21 @@ const config = {
       templateContent: `
       <body></body>
       <script type="text/javascript">
+      // deno-lint-ignore no-process-global
+      const validWidgets = ${JSON.stringify(validWidgetNames)};
       const urlSearchParams = new URLSearchParams(window.location.search);
-      const queryParams = Object.fromEntries(urlSearchParams.entries());
-      const widgetName = queryParams["widgetName"];
-      if (widgetName == undefined) {document.body.innerHTML+="Widget ID not specified."}
+      const widgetName = urlSearchParams.get("widgetName");
 
-      const s = document.createElement('script');
-      s.type = "module";
-      s.src = widgetName+"${SANDBOX_SUFFIX}.js";
-      document.body.appendChild(s);
+      if (!widgetName) {
+        document.body.textContent += "Widget ID not specified.";
+      } else if (!validWidgets.includes(widgetName)) {
+        document.body.textContent += "Invalid Widget ID.";
+      } else {
+        const s = document.createElement('script');
+        s.type = "module";
+        s.src = widgetName + "${SANDBOX_SUFFIX}.js";
+        document.body.appendChild(s);
+      }
       </script>
     `,
       filename: 'index.html',
