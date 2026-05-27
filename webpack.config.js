@@ -9,7 +9,7 @@ const ReactRefreshWebpackPlugin = require('@pmmmwh/react-refresh-webpack-plugin'
 
 const CopyPlugin = require('copy-webpack-plugin');
 
-// deno-lint-ignore no-process-global
+// deno-lint-ignore no-process-global no-node-globals
 const isProd = process.env.NODE_ENV === 'production';
 const isDevelopment = !isProd;
 
@@ -77,7 +77,7 @@ const config = {
       templateContent: `
       <body></body>
       <script type="text/javascript">
-      // deno-lint-ignore no-process-global
+      // deno-lint-ignore no-process-global no-node-globals
       const validWidgets = ${JSON.stringify(validWidgetNames)};
       const urlSearchParams = new URLSearchParams(window.location.search);
       const widgetName = urlSearchParams.get("widgetName");
