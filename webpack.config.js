@@ -1,4 +1,3 @@
-const process = require('node:process');
 const path = require('path');
 const glob = require('glob');
 
