@@ -1,0 +1,6 @@
+## 2024-05-15 - DOM-based XSS via unvalidated widgetName in Webpack Dev Server HTML Template
+**Vulnerability:** A DOM-based XSS vulnerability existed in `webpack.config.js` within the `HtmlWebpackPlugin` template. It read the `widgetName` query parameter from the URL and appended it to the DOM (both as a script source and, implicitly through `innerHTML`, when the parameter was not provided, though the direct threat was script execution). An attacker could craft a URL with a malicious payload in `widgetName` leading to arbitrary script execution within the plugin sandbox environment.
+**Learning:** In dynamically generated HTML templates, any value derived from the URL (like query parameters) must be treated as untrusted input. When configuring Webpack or similar tools that output HTML, passing a build-time generated allowlist of valid entry points to the template allows for strict validation of requested resources.
+**Prevention:**
+1. Always validate URL parameters against a strict allowlist (e.g., the known list of entry points) before using them to construct script sources.
+2. Use safe DOM manipulation methods like `textContent` instead of `innerHTML` when displaying user-controlled data or fallback messages to avoid injecting malicious markup.
