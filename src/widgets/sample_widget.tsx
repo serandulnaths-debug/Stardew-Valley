@@ -7,13 +7,21 @@ export const SampleWidget = () => {
   let likesPizza = useTracker(() => plugin.settings.getSetting<boolean>('pizza'));
   let favoriteNumber = useTracker(() => plugin.settings.getSetting<number>('favorite-number'));
 
+  const isLoading = name === undefined || likesPizza === undefined || favoriteNumber === undefined;
+
   return (
     <div className="p-2 m-2 rounded-lg rn-clr-background-light-positive rn-clr-content-positive">
       <h1 className="text-xl">Sample Plugin</h1>
-      <div>
-        Hi {name}, you {!!likesPizza ? 'do' : "don't"} like pizza and your favorite number is{' '}
-        {favoriteNumber}!
-      </div>
+      {isLoading ? (
+        <div aria-busy="true" aria-live="polite">
+          Loading settings...
+        </div>
+      ) : (
+        <div>
+          Hi {name}, you {!!likesPizza ? 'do' : "don't"} like pizza and your favorite number is{' '}
+          {favoriteNumber}!
+        </div>
+      )}
     </div>
   );
 };
