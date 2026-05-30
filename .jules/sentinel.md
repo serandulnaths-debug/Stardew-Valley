@@ -1,0 +1,4 @@
+## 2024-05-30 - Fix DOM-based XSS and CORS domain spoofing vulnerabilities
+**Vulnerability:** The widget template dynamically created script tags with unvalidated query parameters using innerHTML, enabling DOM-based XSS, and the development server naively trusted `origin.startsWith("http://localhost:")`, allowing attackers to bypass CORS using domains like `http://localhost.evil.com`.
+**Learning:** Build-time configuration files that dynamically inject unvalidated query parameters directly into HTML templates bypass standard modern framework (like React) XSS protections, and string prefix matching for origins is insufficient to stop domain spoofing attacks.
+**Prevention:** Always validate runtime input injected into build templates against a strictly generated allowlist using safe DOM APIs (like textContent), and use the robust standard URL API to parse and correctly assert the protocol, hostname, and port of origin strings in CORS policies.
