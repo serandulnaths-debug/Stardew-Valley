@@ -1,0 +1,3 @@
+## 2024-05-30 - Handling Asynchronous Settings Rendering
+**Learning:** Plugin settings loaded via `useTracker` (e.g., `plugin.settings.getSetting`) are initially asynchronous and return `undefined` on the first render. Rendering them directly causes an awkward flash of incomplete content before the values populate (e.g., "Hi , you don't like pizza and your favorite number is !").
+**Action:** Always provide a semantic loading state (e.g., `<div aria-busy="true" aria-live="polite">Loading...</div>`) when fetching settings or data that isn't instantly available on mount, ensuring a smooth UX and preventing screen readers from announcing incomplete content.
