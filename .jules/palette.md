@@ -1,0 +1,3 @@
+## 2025-05-31 - Asynchronous Settings and Loading Fallbacks
+**Learning:** RemNote plugin settings fetched via `useTracker` return `undefined` initially. Without fallback states, this causes uninitialized variable rendering flashes (which are confusing) and impacts screen reader users significantly.
+**Action:** Always provide semantic fallback/loading states using `aria-busy="true"` and `aria-live="polite"` when dealing with `useTracker` to prevent flashing content and ensure screen readers gracefully handle dynamic loading of settings.
