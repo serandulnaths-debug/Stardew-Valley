@@ -1,0 +1,3 @@
+## 2024-06-01 - Concurrently Initialize Plugin Registrations
+**Learning:** Sequential `await` calls in a RemNote plugin's `onActivate` function create a performance bottleneck. Each `registerSetting`, `registerCommand`, or `registerWidget` call makes an asynchronous IPC/network request to the RemNote host. Awaiting them one by one creates a waterfall effect, significantly delaying the total initialization time of the plugin.
+**Action:** Use `Promise.all` to batch independent asynchronous plugin registrations (settings, commands, widgets) during activation to execute them concurrently, optimizing load time.
