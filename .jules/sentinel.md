@@ -1,0 +1,4 @@
+## 2024-06-01 - Prevent DOM XSS and Domain Spoofing in Webpack Config
+**Vulnerability:** The dev server `webpack.config.js` was vulnerable to DOM-based XSS because `widgetName` was not validated and injected using `innerHTML`. Additionally, CORS validation checked if the domain started with `http://localhost:`, making it vulnerable to spoofing (e.g. `http://localhost.evil.com`).
+**Learning:** Build-time configuration scripts often lack the rigorous validation applied to runtime code, yet they produce artifacts directly executed in the browser. Using `startsWith` for origin validation is a classic CORS misconfiguration.
+**Prevention:** Always validate parameters reflected in the DOM against an allowlist, inject text via `textContent`, and strictly validate origins using the URL API (parsing the hostname) rather than simple string prefix matching.
