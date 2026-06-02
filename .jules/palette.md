@@ -1,0 +1,3 @@
+## 2024-06-02 - RemNote Plugin Settings Fallback States
+**Learning:** Settings retrieved via `@remnote/plugin-sdk` `useTracker` (e.g., `getSetting`) evaluate synchronously and do not have an asynchronous loading phase where they return `undefined`. Therefore, an `undefined` value means the setting is explicitly unconfigured by the user. Relying solely on truthy/falsy checks or rendering without fallbacks leads to poor UX and blank elements.
+**Action:** Always provide explicit default fallback values (e.g., using `??` or `||`) inline when rendering `useTracker` setting values to ensure continuous content and avoid confusing empty states. Apply semantic HTML tags (like `<section>` and `<strong>`) around these values to enhance accessibility.
