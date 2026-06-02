@@ -1,3 +1,4 @@
+// deno-lint-ignore-file
 const path = require('path');
 const glob = require('glob');
 
