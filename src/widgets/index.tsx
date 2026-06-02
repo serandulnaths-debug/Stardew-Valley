@@ -1,3 +1,4 @@
+// deno-lint-ignore-file
 import { declareIndexPlugin, type ReactRNPlugin, WidgetLocation } from '@remnote/plugin-sdk';
 import '../style.css';
 import '../index.css'; // import <widget-name>.css

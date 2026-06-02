@@ -1,0 +1,4 @@
+## 2024-05-18 - Prevent DOM XSS in Plugin Sandbox Loader
+**Vulnerability:** The HtmlWebpackPlugin template loaded a module script directly from a user-controlled `widgetName` query parameter without validation, leading to potential arbitrary script loading. Also, error messages were directly appended to the DOM via `innerHTML`, causing potential XSS if the unvalidated parameter was reflected.
+**Learning:** Build-time tools (like Webpack configurations) handling HTML templates can introduce runtime vulnerabilities if they reflect user-controlled input unsafely.
+**Prevention:** Validate user-controlled inputs against a build-time generated allowlist of known/safe values before performing sensitive operations (like dynamically appending scripts). Reflect any strings into the DOM using `textContent` instead of `innerHTML`.

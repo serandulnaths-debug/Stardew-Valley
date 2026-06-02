@@ -1,3 +1,4 @@
+// deno-lint-ignore-file
 const path = require('path');
 const glob = require('glob');
 
@@ -16,18 +17,22 @@ const fastRefresh = isDevelopment ? new ReactRefreshWebpackPlugin() : null;
 
 const SANDBOX_SUFFIX = '-sandbox';
 
+const entry = glob.sync('./src/widgets/**/*.tsx').reduce((obj, el) => {
+  const rel = path
+    .relative('src/widgets', el)
+    .replace(/\.[tj]sx?$/, '')
+    .replace(/\\/g, '/');
+
+  obj[rel] = './' + path.relative(__dirname, el).replace(/\\/g, '/');
+  obj[`${rel}${SANDBOX_SUFFIX}`] = './' + path.relative(__dirname, el).replace(/\\/g, '/');
+  return obj;
+}, {});
+
+const validWidgetNames = Object.keys(entry).filter((name) => !name.endsWith(SANDBOX_SUFFIX));
+
 const config = {
   mode: isProd ? 'production' : 'development',
-  entry: glob.sync('./src/widgets/**/*.tsx').reduce((obj, el) => {
-    const rel = path
-      .relative('src/widgets', el)
-      .replace(/\.[tj]sx?$/, '')
-      .replace(/\\/g, '/');
-
-    obj[rel] = el;
-    obj[`${rel}${SANDBOX_SUFFIX}`] = el;
-    return obj;
-  }, {}),
+  entry: entry,
 
   output: {
     path: path.resolve(__dirname, 'dist'),
@@ -71,12 +76,19 @@ const config = {
       const urlSearchParams = new URLSearchParams(window.location.search);
       const queryParams = Object.fromEntries(urlSearchParams.entries());
       const widgetName = queryParams["widgetName"];
-      if (widgetName == undefined) {document.body.innerHTML+="Widget ID not specified."}
 
-      const s = document.createElement('script');
-      s.type = "module";
-      s.src = widgetName+"${SANDBOX_SUFFIX}.js";
-      document.body.appendChild(s);
+      const validWidgetNames = ${JSON.stringify(validWidgetNames)};
+
+      if (widgetName == undefined) {
+        document.body.textContent += "Widget ID not specified.";
+      } else if (!validWidgetNames.includes(widgetName)) {
+        document.body.textContent += "Invalid Widget ID specified.";
+      } else {
+        const s = document.createElement('script');
+        s.type = "module";
+        s.src = widgetName+"${SANDBOX_SUFFIX}.js";
+        document.body.appendChild(s);
+      }
       </script>
     `,
       filename: 'index.html',
@@ -115,7 +127,7 @@ if (isProd) {
     hot: true,
     compress: true,
     watchFiles: ['src/*'],
-    headers: (req, res, context) => {
+    headers: (req, _res, _context) => {
       const allowedOrigins = [
         'https://www.remnote.com',
         'https://remnote.com',
