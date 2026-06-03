@@ -1,0 +1,3 @@
+## 2024-06-03 - RemNote Setting Fallbacks and Semantic HTML
+**Learning:** In the context of RemNote plugins, settings loaded via `useTracker` (e.g., `plugin.settings.getSetting`) are available synchronously. They do not have an initial async loading phase where they return `undefined`. If they return `undefined`, it simply means the setting is unset by the user. Rendering a loading state is unnecessary.
+**Action:** Handle `undefined` settings by providing fallback default values (e.g., `name || 'User'`) instead of rendering a loading state. Furthermore, ensure semantic tags (`<section>`, `<header>`) and ARIA labels are used for standard plugin widgets.
