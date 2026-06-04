@@ -1,0 +1,4 @@
+## 2025-06-04 - Fix DOM-based XSS in HtmlWebpackPlugin template
+**Vulnerability:** A DOM-based XSS vulnerability existed in `webpack.config.js` because `widgetName` was read from the URL query parameters and directly appended to the DOM using `document.body.innerHTML += ...` when `widgetName` was undefined, allowing execution of arbitrary scripts injected through the query string.
+**Learning:** Using `innerHTML` with unsanitized user input (even for error messages) creates a DOM-based XSS vector. Build tools like Webpack generating template code also need strict input validation since this template executes on the client.
+**Prevention:** Always validate user input against a known allowlist (e.g., dynamically generated `validWidgetNames` from the entry configuration) before processing. Furthermore, when rendering text to the DOM, use `textContent` instead of `innerHTML` to ensure input is treated as text rather than executable HTML.
