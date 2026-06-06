@@ -1,0 +1,3 @@
+## 2025-02-23 - Concurrent Plugin Initialization
+**Learning:** Independent asynchronous registrations in RemNote plugin's `onActivate` function (like settings, commands, and widgets) block each other sequentially if awaited individually, slowing down the plugin load time.
+**Action:** Always group independent asynchronous initialization tasks in `onActivate` inside a single `Promise.all` array to execute them concurrently.
