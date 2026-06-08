@@ -3,8 +3,11 @@ import { usePlugin, renderWidget, useTracker } from '@remnote/plugin-sdk';
 export const SampleWidget = () => {
   const plugin = usePlugin();
 
+  // deno-lint-ignore prefer-const
   let name = useTracker(() => plugin.settings.getSetting<string>('name'));
+  // deno-lint-ignore prefer-const
   let likesPizza = useTracker(() => plugin.settings.getSetting<boolean>('pizza'));
+  // deno-lint-ignore prefer-const
   let favoriteNumber = useTracker(() => plugin.settings.getSetting<number>('favorite-number'));
 
   return (
@@ -16,7 +19,10 @@ export const SampleWidget = () => {
         Sample Plugin
       </h1>
       <div>
-        Hi {name || 'User'}, you {!!likesPizza ? 'do' : "don't"} like pizza and your favorite number is{' '}
+        Hi {name || 'User'}, you {
+          // deno-lint-ignore no-extra-boolean-cast
+          !!likesPizza ? 'do' : "don't"
+        } like pizza and your favorite number is{' '}
         {favoriteNumber ?? 0}!
       </div>
     </section>
