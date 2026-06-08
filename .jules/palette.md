@@ -1,0 +1,3 @@
+## 2024-06-08 - Fallbacks for Synchronous RemNote Plugin Settings
+**Learning:** In the context of RemNote plugins, settings loaded via `useTracker` (e.g., `plugin.settings.getSetting`) are available synchronously. They do not have an initial async loading phase where they return `undefined`. If they return `undefined`, it means the setting is explicitly unset. Additionally, `<section>` with `aria-labelledby` provides better semantic grouping for widget components.
+**Action:** When using `useTracker` to retrieve settings, provide default fallback values directly in the render logic (e.g., `name || 'User'`) rather than implementing intermediate loading states. Always use semantic landmarks for root components.
