@@ -1,0 +1,3 @@
+## 2024-06-09 - RemNote Plugin Settings & Semantic HTML
+**Learning:** When developing RemNote plugins, settings loaded via `useTracker` (e.g., `plugin.settings.getSetting`) are available synchronously. However, if they return `undefined`, it signifies the user hasn't set them yet, rather than an initial loading state. Additionally, typical React templates often misuse generic `div`s when semantic HTML like `<section>` or `<p>` would improve screen reader interpretation and a11y.
+**Action:** Always provide explicit fallback values for unset RemNote settings (e.g., `name || 'User'`) instead of rendering a loading state. Refactor raw nested `div`s into semantic elements like `<section>`, `<article>`, or `<p>` to natively boost accessibility.
