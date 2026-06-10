@@ -1,0 +1,3 @@
+## 2024-05-24 - Semantic HTML and Fallbacks in Widgets
+**Learning:** When developing plugins using `useTracker` to retrieve settings asynchronously, settings might initially be unset. Without fallback values, the UI renders awkward empty spaces (e.g., "Hi , you don't like pizza..."). Also, using generic `<div>` elements for core sections misses accessibility opportunities.
+**Action:** Always provide sensible default fallback values for settings loaded via `useTracker`. Additionally, use semantic tags like `<section>` with an `aria-label` to group logically related parts of a widget to improve screen reader accessibility.
