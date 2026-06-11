@@ -1,3 +1,4 @@
+// deno-lint-ignore-file prefer-const no-extra-boolean-cast
 import { usePlugin, renderWidget, useTracker } from '@remnote/plugin-sdk';
 
 export const SampleWidget = () => {
