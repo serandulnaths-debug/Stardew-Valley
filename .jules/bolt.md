@@ -1,0 +1,3 @@
+## 2024-06-12 - Concurrent Plugin Registration
+**Learning:** Independent asynchronous registrations in the RemNote plugin `onActivate` function (like registering settings, commands, and widgets sequentially via `await`) can be grouped. Doing them sequentially blocks the next registration until the previous one finishes.
+**Action:** Always group independent asynchronous initialization tasks in `onActivate` using `Promise.all` to execute them concurrently, reducing total plugin load time.
