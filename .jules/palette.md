@@ -1,0 +1,3 @@
+## 2024-06-13 - Fallback values for settings
+**Learning:** RemNote plugin settings load synchronously but return `undefined` when unset by the user. There is no loading state to rely on, which can result in poor UX like empty strings or `undefined` being displayed.
+**Action:** Always provide sensible fallback defaults (e.g., `value || 'Default'`, `value ?? true`) when using `useTracker` to retrieve settings to ensure the UI remains coherent before a user explicitly configures the plugin.
