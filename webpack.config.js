@@ -24,8 +24,8 @@ const config = {
       .replace(/\.[tj]sx?$/, '')
       .replace(/\\/g, '/');
 
-    obj[rel] = el;
-    obj[`${rel}${SANDBOX_SUFFIX}`] = el;
+    obj[rel] = './' + path.relative(__dirname, el).replace(/\\/g, '/');
+    obj[`${rel}${SANDBOX_SUFFIX}`] = './' + path.relative(__dirname, el).replace(/\\/g, '/');
     return obj;
   }, {}),
 
@@ -115,7 +115,8 @@ if (isProd) {
     hot: true,
     compress: true,
     watchFiles: ['src/*'],
-    headers: (req, res, context) => {
+    // deno-lint-ignore no-unused-vars
+    headers: (req, res, _context) => {
       const allowedOrigins = [
         'https://www.remnote.com',
         'https://remnote.com',
