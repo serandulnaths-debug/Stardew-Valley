@@ -1,0 +1,4 @@
+## 2024-03-24 - DOM-based XSS and CORS Validation
+**Vulnerability:** `HtmlWebpackPlugin` in `webpack.config.js` blindly assigned the `widgetName` query parameter into `document.body.innerHTML`, allowing DOM-based XSS attacks via the URL. In addition, the webpack devServer CORS config validated `origin` strings using an insecure `origin.startsWith('http://localhost:')` check, susceptible to domain spoofing (e.g. `http://localhost:8080.evil.com`).
+**Learning:** Build scripts handling query parameters and serving dynamic content often overlook basic sanitization. `innerHTML` should be avoided for error messages. Simple string prefix checks for origins are insufficient.
+**Prevention:** Generate a build-time valid widget list to check `widgetName` against, and safely render messages using `textContent`. Always parse the origin header using the `URL` API and strictly check `url.hostname`.
