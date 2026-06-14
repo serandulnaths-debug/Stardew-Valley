@@ -18,14 +18,14 @@ const SANDBOX_SUFFIX = '-sandbox';
 
 const config = {
   mode: isProd ? 'production' : 'development',
-  entry: glob.sync('./src/widgets/**/*.tsx').reduce((obj, el) => {
+  entry: glob.sync('src/widgets/**/*.tsx').reduce((obj, el) => {
     const rel = path
       .relative('src/widgets', el)
       .replace(/\.[tj]sx?$/, '')
       .replace(/\\/g, '/');
 
-    obj[rel] = el;
-    obj[`${rel}${SANDBOX_SUFFIX}`] = el;
+    obj[rel] = './' + path.relative(__dirname, el).replace(/\\/g, '/');
+    obj[`${rel}${SANDBOX_SUFFIX}`] = './' + path.relative(__dirname, el).replace(/\\/g, '/');
     return obj;
   }, {}),
 
@@ -115,7 +115,7 @@ if (isProd) {
     hot: true,
     compress: true,
     watchFiles: ['src/*'],
-    headers: (req, res, context) => {
+    headers: (req, _res, _context) => {
       const allowedOrigins = [
         'https://www.remnote.com',
         'https://remnote.com',
