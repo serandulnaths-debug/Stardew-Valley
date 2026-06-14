@@ -1,0 +1,3 @@
+## 2024-06-14 - Semantic HTML and Fallbacks in RemNote Plugins
+**Learning:** RemNote plugin settings accessed via `useTracker` return synchronously, meaning they do not have a loading phase and return `undefined` immediately if unset. Furthermore, widget components benefit significantly from basic semantic HTML mapping (like `<section aria-labelledby="...">`) and fallback states for undefined variables to ensure users never see broken or missing strings in the UI.
+**Action:** Always provide synchronous fallback default values for `useTracker` setting access, and apply semantic HTML to root structural elements in custom widgets.
