@@ -1,0 +1,4 @@
+## 2025-02-14 - Fix DOM-based XSS in webpack.config.js
+**Vulnerability:** DOM-based Cross-Site Scripting (XSS) in `webpack.config.js`. The `HtmlWebpackPlugin` template was directly assigning user-controllable input from the `widgetName` URL query parameter into the DOM via `document.body.innerHTML += ...` without validation or escaping.
+**Learning:** Build-time generated HTML templates that parse URL parameters and render them must be careful to avoid XSS by validating the input against a known allowlist and utilizing safe APIs like `textContent` rather than `innerHTML`.
+**Prevention:** Always validate external input (even URL parameters in client-side dev configurations) against strict allowlists (e.g., dynamically generated from webpack entry points) and prefer `textContent` for appending text to the DOM.
