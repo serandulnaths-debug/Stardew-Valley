@@ -1,0 +1,3 @@
+## 2024-05-24 - Provide Fallback States for Dynamically Loaded Settings
+**Learning:** In RemNote plugins, user settings fetched via `useTracker` (e.g., `plugin.settings.getSetting`) might be uninitialized, leading to `undefined` values being rendered directly into the UI. This creates poor uninitialized/empty states where sentences are grammatically incorrect or missing key information.
+**Action:** Always provide sensible fallback values (e.g., `name || 'User'`, `favoriteNumber ?? 42`) when rendering values retrieved from `plugin.settings.getSetting` to ensure a smooth out-of-the-box user experience.
