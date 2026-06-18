@@ -9,6 +9,7 @@ const ReactRefreshWebpackPlugin = require('@pmmmwh/react-refresh-webpack-plugin'
 
 const CopyPlugin = require('copy-webpack-plugin');
 
+import process from "node:process";
 const isProd = process.env.NODE_ENV === 'production';
 const isDevelopment = !isProd;
 
