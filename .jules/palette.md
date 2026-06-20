@@ -1,0 +1,5 @@
+## 2024-11-20 - Providing Fallbacks for useTracker and Semantic Wrappers
+
+**Learning:** When using `useTracker` to retrieve user settings in a RemNote widget (e.g., `plugin.settings.getSetting`), the returned value will be `undefined` if the user has not explicitly set a value. It does not mean the setting is "loading," so treating `undefined` as a falsy boolean via `!!` can lead to confusing behavior (e.g., defaulting to false instead of the intended true). Additionally, using non-semantic wrapper `div`s with inline text makes it difficult for screen readers to interpret widget structures properly.
+
+**Action:** Always provide explicit fallback values (using `??` or `||`) for `useTracker` settings, instead of relying on falsy coercion. Furthermore, use semantic HTML tags such as `<section>` and `<p>` for widget content, and leverage ARIA attributes (`aria-labelledby`) to ensure that heading hierarchies are accessible to assistive technologies.
