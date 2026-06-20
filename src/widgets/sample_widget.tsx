@@ -3,18 +3,21 @@ import { usePlugin, renderWidget, useTracker } from '@remnote/plugin-sdk';
 export const SampleWidget = () => {
   const plugin = usePlugin();
 
-  let name = useTracker(() => plugin.settings.getSetting<string>('name'));
-  let likesPizza = useTracker(() => plugin.settings.getSetting<boolean>('pizza'));
-  let favoriteNumber = useTracker(() => plugin.settings.getSetting<number>('favorite-number'));
+  const name = useTracker(() => plugin.settings.getSetting<string>('name')) || 'User';
+  const likesPizza = useTracker(() => plugin.settings.getSetting<boolean>('pizza')) ?? true;
+  const favoriteNumber = useTracker(() => plugin.settings.getSetting<number>('favorite-number')) ?? 42;
 
   return (
-    <div className="p-2 m-2 rounded-lg rn-clr-background-light-positive rn-clr-content-positive">
-      <h1 className="text-xl">Sample Plugin</h1>
-      <div>
-        Hi {name}, you {!!likesPizza ? 'do' : "don't"} like pizza and your favorite number is{' '}
+    <section
+      aria-labelledby="sample-plugin-heading"
+      className="p-2 m-2 rounded-lg rn-clr-background-light-positive rn-clr-content-positive"
+    >
+      <h1 id="sample-plugin-heading" className="text-xl">Sample Plugin</h1>
+      <p>
+        Hi {name}, you {likesPizza ? 'do' : "don't"} like pizza and your favorite number is{' '}
         {favoriteNumber}!
-      </div>
-    </div>
+      </p>
+    </section>
   );
 };
 
