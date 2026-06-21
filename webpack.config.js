@@ -115,6 +115,7 @@ if (isProd) {
     hot: true,
     compress: true,
     watchFiles: ['src/*'],
+    // deno-lint-ignore no-unused-vars
     headers: (req, res, context) => {
       const allowedOrigins = [
         'https://www.remnote.com',
