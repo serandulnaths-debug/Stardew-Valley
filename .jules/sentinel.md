@@ -1,0 +1,4 @@
+## 2024-05-27 - DOM-based XSS in Webpack Template
+**Vulnerability:** The `HtmlWebpackPlugin` template in `webpack.config.js` was vulnerable to DOM-based XSS and arbitrary script execution. It extracted the `widgetName` parameter directly from the query string and appended it directly to the DOM using `innerHTML`, and dynamically generated a script tag with the unsanitized parameter as the source.
+**Learning:** Build tools that dynamically generate sandboxes or standalone pages via templates can easily introduce XSS vectors if they reflect URL parameters without validation. The context here (development/sandbox execution) still requires strict sanitation.
+**Prevention:** Always validate URL parameters against a strict allowlist (in this case, generated from the actual files using `glob` at build time). Use safe DOM APIs like `textContent` instead of `innerHTML` when displaying user input.
