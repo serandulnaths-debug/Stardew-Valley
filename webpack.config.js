@@ -9,6 +9,7 @@ const ReactRefreshWebpackPlugin = require('@pmmmwh/react-refresh-webpack-plugin'
 
 const CopyPlugin = require('copy-webpack-plugin');
 
+// deno-lint-ignore no-node-globals
 const isProd = process.env.NODE_ENV === 'production';
 const isDevelopment = !isProd;
 
@@ -24,8 +25,8 @@ const config = {
       .replace(/\.[tj]sx?$/, '')
       .replace(/\\/g, '/');
 
-    obj[rel] = el;
-    obj[`${rel}${SANDBOX_SUFFIX}`] = el;
+    obj[rel] = './' + path.relative(__dirname, el).replace(/\\/g, '/');
+    obj[`${rel}${SANDBOX_SUFFIX}`] = './' + path.relative(__dirname, el).replace(/\\/g, '/');
     return obj;
   }, {}),
 
@@ -65,20 +66,34 @@ const config = {
           filename: '[name].css',
         }),
     new HtmlWebpackPlugin({
-      templateContent: `
-      <body></body>
-      <script type="text/javascript">
-      const urlSearchParams = new URLSearchParams(window.location.search);
-      const queryParams = Object.fromEntries(urlSearchParams.entries());
-      const widgetName = queryParams["widgetName"];
-      if (widgetName == undefined) {document.body.innerHTML+="Widget ID not specified."}
+      templateContent: () => {
+        const validWidgetNames = glob.sync('./src/widgets/**/*.tsx').map(el => path.relative('src/widgets', el).replace(/\.[tj]sx?$/, '').replace(/\\/g, '/'));
 
-      const s = document.createElement('script');
-      s.type = "module";
-      s.src = widgetName+"${SANDBOX_SUFFIX}.js";
-      document.body.appendChild(s);
-      </script>
-    `,
+        return `
+        <body></body>
+        <script type="text/javascript">
+        const urlSearchParams = new URLSearchParams(window.location.search);
+        const queryParams = Object.fromEntries(urlSearchParams.entries());
+        const widgetName = queryParams["widgetName"];
+        const validWidgetNames = ${JSON.stringify(validWidgetNames)};
+
+        if (widgetName == undefined) {
+          const div = document.createElement('div');
+          div.textContent = "Widget ID not specified.";
+          document.body.appendChild(div);
+        } else if (!validWidgetNames.includes(widgetName)) {
+          const div = document.createElement('div');
+          div.textContent = "Invalid Widget ID.";
+          document.body.appendChild(div);
+        } else {
+          const s = document.createElement('script');
+          s.type = "module";
+          s.src = widgetName+"${SANDBOX_SUFFIX}.js";
+          document.body.appendChild(s);
+        }
+        </script>
+      `;
+      },
       filename: 'index.html',
       inject: false,
     }),
@@ -115,7 +130,7 @@ if (isProd) {
     hot: true,
     compress: true,
     watchFiles: ['src/*'],
-    headers: (req, res, context) => {
+    headers: (req, _res, _context) => {
       const allowedOrigins = [
         'https://www.remnote.com',
         'https://remnote.com',
