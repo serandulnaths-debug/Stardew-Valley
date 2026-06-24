@@ -1,0 +1,3 @@
+## 2024-06-24 - Uninitialized Synchronous Settings UX
+**Learning:** In RemNote plugins, settings loaded via `useTracker` (e.g., `plugin.settings.getSetting`) are available synchronously. There is no initial async loading phase where they return `undefined`. If they return `undefined` initially or anytime, it strictly means the user hasn't explicitly set them yet.
+**Action:** Provide immediate fallback values (like `name || 'User'`) instead of showing loading states or rendering empty text, ensuring a smoother initial user experience without jank.
