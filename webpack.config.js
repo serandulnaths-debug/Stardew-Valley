@@ -16,18 +16,24 @@ const fastRefresh = isDevelopment ? new ReactRefreshWebpackPlugin() : null;
 
 const SANDBOX_SUFFIX = '-sandbox';
 
+const widgetEntries = glob.sync('./src/widgets/**/*.tsx').reduce((obj, el) => {
+  const rel = path
+    .relative('src/widgets', el)
+    .replace(/\.[tj]sx?$/, '')
+    .replace(/\\/g, '/');
+
+  // Fix path relativization as memory states
+  const relativePath = './' + path.relative(__dirname, el).replace(/\\/g, '/');
+  obj[rel] = relativePath;
+  obj[`${rel}${SANDBOX_SUFFIX}`] = relativePath;
+  return obj;
+}, {});
+
+const validWidgetNames = Object.keys(widgetEntries).filter(key => !key.endsWith(SANDBOX_SUFFIX));
+
 const config = {
   mode: isProd ? 'production' : 'development',
-  entry: glob.sync('./src/widgets/**/*.tsx').reduce((obj, el) => {
-    const rel = path
-      .relative('src/widgets', el)
-      .replace(/\.[tj]sx?$/, '')
-      .replace(/\\/g, '/');
-
-    obj[rel] = el;
-    obj[`${rel}${SANDBOX_SUFFIX}`] = el;
-    return obj;
-  }, {}),
+  entry: widgetEntries,
 
   output: {
     path: path.resolve(__dirname, 'dist'),
@@ -71,12 +77,18 @@ const config = {
       const urlSearchParams = new URLSearchParams(window.location.search);
       const queryParams = Object.fromEntries(urlSearchParams.entries());
       const widgetName = queryParams["widgetName"];
-      if (widgetName == undefined) {document.body.innerHTML+="Widget ID not specified."}
 
-      const s = document.createElement('script');
-      s.type = "module";
-      s.src = widgetName+"${SANDBOX_SUFFIX}.js";
-      document.body.appendChild(s);
+      const validWidgets = ${JSON.stringify(validWidgetNames)};
+
+      if (!widgetName || !validWidgets.includes(widgetName)) {
+        const msg = document.createTextNode("Widget ID not specified or invalid.");
+        document.body.appendChild(msg);
+      } else {
+        const s = document.createElement('script');
+        s.type = "module";
+        s.src = widgetName+"${SANDBOX_SUFFIX}.js";
+        document.body.appendChild(s);
+      }
       </script>
     `,
       filename: 'index.html',
@@ -115,7 +127,7 @@ if (isProd) {
     hot: true,
     compress: true,
     watchFiles: ['src/*'],
-    headers: (req, res, context) => {
+    headers: (req, _res, _context) => {
       const allowedOrigins = [
         'https://www.remnote.com',
         'https://remnote.com',
@@ -126,12 +138,23 @@ if (isProd) {
         'Access-Control-Allow-Headers': 'baggage, sentry-trace',
       };
 
-      if (
-        allowedOrigins.includes(origin) ||
-        (origin && (origin.startsWith('http://localhost:') || origin.startsWith('http://127.0.0.1:')))
-      ) {
-        headers['Access-Control-Allow-Origin'] = origin;
-        headers['Vary'] = 'Origin';
+      if (origin) {
+        try {
+          const originUrl = new URL(origin);
+          if (
+            allowedOrigins.includes(origin) ||
+            originUrl.hostname === 'localhost' ||
+            originUrl.hostname === '127.0.0.1'
+          ) {
+            headers['Access-Control-Allow-Origin'] = origin;
+            headers['Vary'] = 'Origin';
+          }
+        } catch (_e) {
+          // invalid URL, ignore
+        }
+      } else if (allowedOrigins.includes(origin)) {
+         headers['Access-Control-Allow-Origin'] = origin;
+         headers['Vary'] = 'Origin';
       }
 
       return headers;
