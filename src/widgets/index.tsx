@@ -3,6 +3,9 @@ import '../style.css';
 import '../index.css'; // import <widget-name>.css
 
 async function onActivate(plugin: ReactRNPlugin) {
+  // ⚡ Bolt: Execute independent plugin capability registrations concurrently.
+  // This reduces the number of sequential IPC round-trips to the parent RemNote window,
+  // significantly decreasing the overall plugin initialization time overhead.
   await Promise.all([
     // Register settings
     plugin.settings.registerStringSetting({
