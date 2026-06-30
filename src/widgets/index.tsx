@@ -3,41 +3,46 @@ import '../style.css';
 import '../index.css'; // import <widget-name>.css
 
 async function onActivate(plugin: ReactRNPlugin) {
-  // Register settings
-  await plugin.settings.registerStringSetting({
-    id: 'name',
-    title: 'What is your Name?',
-    defaultValue: 'Bob',
-  });
+  // ⚡ Bolt: Execute independent plugin capability registrations concurrently.
+  // This reduces the number of sequential IPC round-trips to the parent RemNote window,
+  // significantly decreasing the overall plugin initialization time overhead.
+  await Promise.all([
+    // Register settings
+    plugin.settings.registerStringSetting({
+      id: 'name',
+      title: 'What is your Name?',
+      defaultValue: 'Bob',
+    }),
 
-  await plugin.settings.registerBooleanSetting({
-    id: 'pizza',
-    title: 'Do you like pizza?',
-    defaultValue: true,
-  });
+    plugin.settings.registerBooleanSetting({
+      id: 'pizza',
+      title: 'Do you like pizza?',
+      defaultValue: true,
+    }),
 
-  await plugin.settings.registerNumberSetting({
-    id: 'favorite-number',
-    title: 'What is your favorite number?',
-    defaultValue: 42,
-  });
+    plugin.settings.registerNumberSetting({
+      id: 'favorite-number',
+      title: 'What is your favorite number?',
+      defaultValue: 42,
+    }),
 
-  // A command that inserts text into the editor if focused.
-  await plugin.app.registerCommand({
-    id: 'editor-command',
-    name: 'Editor Command',
-    action: async () => {
-      plugin.editor.insertPlainText('Hello World!');
-    },
-  });
+    // A command that inserts text into the editor if focused.
+    plugin.app.registerCommand({
+      id: 'editor-command',
+      name: 'Editor Command',
+      action: () => {
+        plugin.editor.insertPlainText('Hello World!');
+      },
+    }),
 
-  // Show a toast notification to the user.
-  await plugin.app.toast("I'm a toast!");
+    // Show a toast notification to the user.
+    plugin.app.toast("I'm a toast!"),
 
-  // Register a sidebar widget.
-  await plugin.app.registerWidget('sample_widget', WidgetLocation.RightSidebar, {
-    dimensions: { height: 'auto', width: '100%' },
-  });
+    // Register a sidebar widget.
+    plugin.app.registerWidget('sample_widget', WidgetLocation.RightSidebar, {
+      dimensions: { height: 'auto', width: '100%' },
+    }),
+  ]);
 }
 
 async function onDeactivate(_: ReactRNPlugin) {}
