@@ -1,0 +1,7 @@
+## 2024-07-01 - DOM XSS in Webpack Dev Server Sandbox
+**Vulnerability:** The `webpack.config.js` generated an `index.html` via `HtmlWebpackPlugin` that used `document.body.innerHTML += "Widget ID not specified."` when a widget ID was not provided in the query string. Although this particular error string was static, directly modifying `innerHTML` in a template that handles unvalidated URL parameters is an anti-pattern. If any URL parameter or user input were reflected, it would result in a DOM-based XSS. More importantly, it dynamically created and executed a script tag using an unvalidated `widgetName` query parameter (`widgetName + "${SANDBOX_SUFFIX}.js"`). An attacker could inject a malicious path or XSS payload via this parameter.
+**Learning:** Development server configuration files are a common source of vulnerabilities because they execute on the developer's machine and often skip strict security practices. Unvalidated URL query parameters injected directly into the DOM or used to construct script source URLs create critical vectors for XSS.
+**Prevention:**
+- Always use `textContent` instead of `innerHTML` when inserting text into the DOM, to prevent any accidental script execution.
+- Validate all user-controlled input (like URL query parameters) against a strict allowlist. For Webpack plugins, this allowlist can be generated at build-time using `glob` to match legitimate entry points.
+- Never directly construct script source URLs using raw query parameters.
