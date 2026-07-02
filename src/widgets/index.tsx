@@ -3,6 +3,7 @@ import '../style.css';
 import '../index.css'; // import <widget-name>.css
 
 async function onActivate(plugin: ReactRNPlugin) {
+  // Batch independent plugin registrations concurrently to reduce IPC overhead and improve startup time
   await Promise.all([
     // Register settings
     plugin.settings.registerStringSetting({
