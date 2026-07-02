@@ -1,0 +1,3 @@
+## 2024-03-24 - Batch async plugin registrations
+**Learning:** Independent asynchronous registrations in `onActivate` (like settings, commands, and widgets) perform IPC calls that require round-trips to the parent window. Awaiting them sequentially causes a performance bottleneck during plugin startup.
+**Action:** Always execute independent RemNote Plugin SDK registration calls concurrently using `Promise.all` in the `onActivate` function to optimize startup performance.
