@@ -1,0 +1,4 @@
+## 2024-07-03 - DOM-based XSS in HtmlWebpackPlugin template
+**Vulnerability:** The `webpack.config.js` used a user-controlled query parameter (`widgetName`) directly in an HTML `innerHTML` assignment and a `<script src="...">` dynamic tag without any validation. This allowed DOM-based XSS if an attacker crafted a malicious URL like `?widgetName=<img src=x onerror=alert(1)>` (via innerHTML) or loaded a malicious remote script (via script tag).
+**Learning:** Build configuration files that generate static HTML wrappers for sandboxed components can introduce runtime vulnerabilities if they blindly reflect URL parameters into the DOM without sanitization or validation.
+**Prevention:** Always validate user-controlled query parameters against a build-time generated allowlist of valid values before using them in dynamic scripts, and use safe DOM APIs like `textContent` instead of `innerHTML` when rendering error messages.
