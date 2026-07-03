@@ -1,0 +1,3 @@
+## 2024-05-18 - Batching IPC calls in RemNote Plugin SDK
+**Learning:** In the context of RemNote plugins, independent asynchronous registrations in `onActivate` (like `plugin.settings.registerStringSetting`, `plugin.app.registerCommand`, and `plugin.app.registerWidget`) communicate via IPC and require round-trips to the parent window. Sequential `await` calls block each other and increase initialization latency.
+**Action:** Always batch independent asynchronous RemNote Plugin SDK registrations (and similar non-dependent IPC calls) concurrently using `Promise.all` to reduce initialization time and improve perceived performance.
