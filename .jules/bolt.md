@@ -1,0 +1,5 @@
+## 2024-07-04 - Optimize Plugin Initialization with Concurrent IPC Calls
+
+**Learning:** RemNote Plugin SDK operations, particularly during the `onActivate` initialization phase, communicate with the parent RemNote application window via Inter-Process Communication (IPC). Because these function calls (like registering settings, commands, and widgets) require round-trips over the IPC boundary, executing them sequentially using consecutive `await` statements incurs blocking overhead that slows down the overall plugin activation time.
+
+**Action:** When registering independent entities (settings, commands, widgets) during plugin activation, group the SDK API calls into an array and execute them concurrently using `Promise.all([...])`. This amortizes the IPC round-trip latency and yields a measurably faster plugin initialization.
