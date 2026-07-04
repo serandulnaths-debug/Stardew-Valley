@@ -1,0 +1,4 @@
+## 2024-07-04 - Fix DOM-based XSS in Webpack HtmlWebpackPlugin Template
+**Vulnerability:** The dynamic widget loading script in `webpack.config.js` (`HtmlWebpackPlugin` template) directly inserts the `widgetName` query parameter into the DOM using `innerHTML` and uses it to construct a `<script>` `src` attribute without any validation or sanitization. This is a severe DOM-based Cross-Site Scripting (XSS) vulnerability.
+**Learning:** Using query parameters directly in `innerHTML` or as the source for dynamically created script tags exposes the application to XSS and arbitrary code execution, especially dangerous in sandboxed widget environments.
+**Prevention:** Always validate user input against a known allowlist (e.g., dynamically generated valid widget names at build time) and use safe DOM manipulation methods like `textContent` instead of `innerHTML`.
