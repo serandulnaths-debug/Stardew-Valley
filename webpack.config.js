@@ -24,8 +24,10 @@ const config = {
       .replace(/\.[tj]sx?$/, '')
       .replace(/\\/g, '/');
 
-    obj[rel] = el;
-    obj[`${rel}${SANDBOX_SUFFIX}`] = el;
+    // Ensure the filepath value is correctly prefixed with './' and relativized for Webpack resolution
+    const resolvedPath = './' + path.relative(__dirname, el).replace(/\\/g, '/');
+    obj[rel] = resolvedPath;
+    obj[`${rel}${SANDBOX_SUFFIX}`] = resolvedPath;
     return obj;
   }, {}),
 
@@ -115,7 +117,7 @@ if (isProd) {
     hot: true,
     compress: true,
     watchFiles: ['src/*'],
-    headers: (req, res, context) => {
+    headers: (req, _res, _context) => {
       const allowedOrigins = [
         'https://www.remnote.com',
         'https://remnote.com',
