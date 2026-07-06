@@ -1,0 +1,3 @@
+## 2024-07-06 - RemNote Widget Fallbacks and Semantics
+**Learning:** In RemNote plugins, settings loaded via `useTracker` do not have an initial async loading phase where they return `undefined`; they return `undefined` simply because the setting is unset by the user. Handle this by providing fallback default values (e.g., `name || 'User'`) instead of rendering a loading state. Also, standard semantic HTML (`<section>` and `aria-labelledby`) can be cleanly applied to plugin widgets to improve their accessibility without impacting functionality.
+**Action:** Always implement robust fallback states for values fetched via plugin settings to prevent layout shifts or empty variables, and refactor simple `<div>` widgets into accessible semantic components.
