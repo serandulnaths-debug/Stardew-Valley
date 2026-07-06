@@ -1,0 +1,3 @@
+## 2024-07-06 - Concurrent RemNote Plugin Activation
+**Learning:** Independent asynchronous registrations in RemNote plugin `onActivate` hooks (e.g., settings, commands, widgets) communicate via IPC with the parent window. Awaiting them sequentially introduces unnecessary blocking round-trips that slow down plugin startup time.
+**Action:** Use `Promise.all` to batch and execute these independent IPC calls concurrently, significantly speeding up the initialization phase. Ensure any non-async action callbacks (like commands) have the `async` keyword removed to satisfy strict `require-await` Deno lint rules.
