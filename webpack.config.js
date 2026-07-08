@@ -68,15 +68,25 @@ const config = {
       templateContent: `
       <body></body>
       <script type="text/javascript">
+      const validWidgetNames = ${JSON.stringify(
+        glob.sync('./src/widgets/**/*.{ts,tsx,js,jsx}').map((el) =>
+          path.relative('src/widgets', el).replace(/\.[tj]sx?$/, '').replace(/\\/g, '/')
+        )
+      )};
       const urlSearchParams = new URLSearchParams(window.location.search);
       const queryParams = Object.fromEntries(urlSearchParams.entries());
       const widgetName = queryParams["widgetName"];
-      if (widgetName == undefined) {document.body.innerHTML+="Widget ID not specified."}
 
-      const s = document.createElement('script');
-      s.type = "module";
-      s.src = widgetName+"${SANDBOX_SUFFIX}.js";
-      document.body.appendChild(s);
+      if (widgetName == undefined) {
+        document.body.textContent = "Widget ID not specified.";
+      } else if (!validWidgetNames.includes(widgetName)) {
+        document.body.textContent = "Invalid Widget ID specified.";
+      } else {
+        const s = document.createElement('script');
+        s.type = "module";
+        s.src = widgetName+"${SANDBOX_SUFFIX}.js";
+        document.body.appendChild(s);
+      }
       </script>
     `,
       filename: 'index.html',
