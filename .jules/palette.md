@@ -1,0 +1,3 @@
+## 2024-07-09 - RemNote Plugin SDK Settings Fallbacks
+**Learning:** Settings loaded via `useTracker` (e.g. `plugin.settings.getSetting`) do not have an initial async loading phase returning `undefined`. If they return `undefined`, the setting is simply unset by the user. Leaving unset settings directly in JSX can result in confusing empty strings or missing numbers in UI sentences.
+**Action:** Always provide explicit fallback default values (e.g. `{name || 'User'}`) for settings retrieved via `useTracker` instead of rendering a loading state or leaving it empty, and use semantic HTML tags (`<section>`, `<p>`) for widget containers instead of generic `<div>`s for improved accessibility.
