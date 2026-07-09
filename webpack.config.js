@@ -65,22 +65,28 @@ const config = {
           filename: '[name].css',
         }),
     new HtmlWebpackPlugin({
-      templateContent: `
+      templateContent: ({ htmlWebpackPlugin }) => `
       <body></body>
       <script type="text/javascript">
+      const validWidgets = ${JSON.stringify(
+        htmlWebpackPlugin.options.entries.filter(k => !k.endsWith(SANDBOX_SUFFIX))
+      )};
       const urlSearchParams = new URLSearchParams(window.location.search);
-      const queryParams = Object.fromEntries(urlSearchParams.entries());
-      const widgetName = queryParams["widgetName"];
-      if (widgetName == undefined) {document.body.innerHTML+="Widget ID not specified."}
+      const widgetName = urlSearchParams.get("widgetName");
 
-      const s = document.createElement('script');
-      s.type = "module";
-      s.src = widgetName+"${SANDBOX_SUFFIX}.js";
-      document.body.appendChild(s);
+      if (!widgetName || !validWidgets.includes(widgetName)) {
+        document.body.textContent += "Widget ID not specified or invalid.";
+      } else {
+        const s = document.createElement('script');
+        s.type = "module";
+        s.src = widgetName + "${SANDBOX_SUFFIX}.js";
+        document.body.appendChild(s);
+      }
       </script>
     `,
       filename: 'index.html',
       inject: false,
+      entries: Object.keys(glob.sync('./src/widgets/**/*.tsx').reduce((obj, el) => { const rel = path.relative('src/widgets', el).replace(/\.[tj]sx?$/, '').replace(/\\/g, '/'); obj[rel] = el; obj[`${rel}${SANDBOX_SUFFIX}`] = el; return obj; }, {})),
     }),
     new ProvidePlugin({
       React: 'react',
@@ -115,7 +121,7 @@ if (isProd) {
     hot: true,
     compress: true,
     watchFiles: ['src/*'],
-    headers: (req, res, context) => {
+    headers: (req, _res, _context) => {
       const allowedOrigins = [
         'https://www.remnote.com',
         'https://remnote.com',
@@ -126,9 +132,19 @@ if (isProd) {
         'Access-Control-Allow-Headers': 'baggage, sentry-trace',
       };
 
+      let isLocalhost = false;
+      if (origin) {
+        try {
+          const url = new URL(origin);
+          isLocalhost = url.hostname === 'localhost' || url.hostname === '127.0.0.1';
+        } catch (_e) {
+          // invalid URL
+        }
+      }
+
       if (
         allowedOrigins.includes(origin) ||
-        (origin && (origin.startsWith('http://localhost:') || origin.startsWith('http://127.0.0.1:')))
+        isLocalhost
       ) {
         headers['Access-Control-Allow-Origin'] = origin;
         headers['Vary'] = 'Origin';
