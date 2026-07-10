@@ -1,0 +1,3 @@
+## 2026-07-10 - Uninitialized Reactivity Settings Break Widget Flow
+**Learning:** Settings loaded synchronously via `useTracker` (e.g., `plugin.settings.getSetting`) do not have an initial async phase; they will immediately return undefined/false/null if the user hasn't configured them yet. This caused empty spaces in text interpolations and confused boolean flows in `sample_widget`.
+**Action:** Always provide explicit fallback default values (e.g. `|| 'User'`, `?? 42`) within the component render logic for dynamic plugin settings rather than relying entirely on `defaultValue` configurations that might fail or delay synchronization.
