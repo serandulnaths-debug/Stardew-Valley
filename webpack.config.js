@@ -9,6 +9,7 @@ const ReactRefreshWebpackPlugin = require('@pmmmwh/react-refresh-webpack-plugin'
 
 const CopyPlugin = require('copy-webpack-plugin');
 
+// deno-lint-ignore no-node-globals
 const isProd = process.env.NODE_ENV === 'production';
 const isDevelopment = !isProd;
 
@@ -16,18 +17,20 @@ const fastRefresh = isDevelopment ? new ReactRefreshWebpackPlugin() : null;
 
 const SANDBOX_SUFFIX = '-sandbox';
 
+const entries = glob.sync('./src/widgets/**/*.tsx').reduce((obj, el) => {
+  const rel = path
+    .relative('src/widgets', el)
+    .replace(/\.[tj]sx?$/, '')
+    .replace(/\\/g, '/');
+
+  obj[rel] = el;
+  obj[`${rel}${SANDBOX_SUFFIX}`] = el;
+  return obj;
+}, {});
+
 const config = {
   mode: isProd ? 'production' : 'development',
-  entry: glob.sync('./src/widgets/**/*.tsx').reduce((obj, el) => {
-    const rel = path
-      .relative('src/widgets', el)
-      .replace(/\.[tj]sx?$/, '')
-      .replace(/\\/g, '/');
-
-    obj[rel] = el;
-    obj[`${rel}${SANDBOX_SUFFIX}`] = el;
-    return obj;
-  }, {}),
+  entry: entries,
 
   output: {
     path: path.resolve(__dirname, 'dist'),
@@ -68,15 +71,18 @@ const config = {
       templateContent: `
       <body></body>
       <script type="text/javascript">
+      const validWidgets = ${JSON.stringify(Object.keys(entries).filter(k => !k.includes(SANDBOX_SUFFIX)))};
       const urlSearchParams = new URLSearchParams(window.location.search);
       const queryParams = Object.fromEntries(urlSearchParams.entries());
       const widgetName = queryParams["widgetName"];
-      if (widgetName == undefined) {document.body.innerHTML+="Widget ID not specified."}
-
-      const s = document.createElement('script');
-      s.type = "module";
-      s.src = widgetName+"${SANDBOX_SUFFIX}.js";
-      document.body.appendChild(s);
+      if (widgetName == undefined || !validWidgets.includes(widgetName)) {
+        document.body.textContent += "Widget ID not specified or invalid.";
+      } else {
+        const s = document.createElement('script');
+        s.type = "module";
+        s.src = widgetName+"${SANDBOX_SUFFIX}.js";
+        document.body.appendChild(s);
+      }
       </script>
     `,
       filename: 'index.html',
@@ -115,7 +121,7 @@ if (isProd) {
     hot: true,
     compress: true,
     watchFiles: ['src/*'],
-    headers: (req, res, context) => {
+    headers: (req, _res, _context) => {
       const allowedOrigins = [
         'https://www.remnote.com',
         'https://remnote.com',
