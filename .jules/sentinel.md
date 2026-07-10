@@ -1,0 +1,4 @@
+## 2024-05-25 - DOM-based XSS in Webpack Dev Server Sandbox
+**Vulnerability:** The `HtmlWebpackPlugin` in `webpack.config.js` was using `document.body.innerHTML += ...` to render errors when a `widgetName` was invalid, and directly taking `widgetName` from URL params to construct a script `src`. This allowed attackers to craft malicious URLs that would execute arbitrary JavaScript in the developer's local dev server environment.
+**Learning:** Even simple local developer server configurations need strict input validation. Directly placing URL query params into the DOM using `.innerHTML` or into script `src` paths without a predefined allowlist introduces a significant vector for DOM-based XSS.
+**Prevention:** Always validate query parameters against a predefined allowlist (in this case, dynamically generated entry points). Avoid using `.innerHTML` when handling untrusted strings; opt for `.textContent` to render strings safely as text.
