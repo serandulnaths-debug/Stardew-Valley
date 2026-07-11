@@ -9,19 +9,13 @@ const ReactRefreshWebpackPlugin = require('@pmmmwh/react-refresh-webpack-plugin'
 
 const CopyPlugin = require('copy-webpack-plugin');
 
+// deno-lint-ignore no-node-globals
 const isProd = process.env.NODE_ENV === 'production';
 const isDevelopment = !isProd;
 
 const fastRefresh = isDevelopment ? new ReactRefreshWebpackPlugin() : null;
 
 const SANDBOX_SUFFIX = '-sandbox';
-
-const widgetNames = glob.sync('./src/widgets/**/*.tsx').map((el) => {
-  return path
-    .relative('src/widgets', el)
-    .replace(/\.[tj]sx?$/, '')
-    .replace(/\\/g, '/');
-});
 
 const config = {
   mode: isProd ? 'production' : 'development',
@@ -75,20 +69,15 @@ const config = {
       templateContent: `
       <body></body>
       <script type="text/javascript">
-      const validWidgetNames = ${JSON.stringify(widgetNames)};
       const urlSearchParams = new URLSearchParams(window.location.search);
       const queryParams = Object.fromEntries(urlSearchParams.entries());
       const widgetName = queryParams["widgetName"];
-      if (widgetName == undefined) {
-        document.body.textContent += "Widget ID not specified.";
-      } else if (!validWidgetNames.includes(widgetName)) {
-        document.body.textContent += "Invalid Widget ID.";
-      } else {
-        const s = document.createElement('script');
-        s.type = "module";
-        s.src = widgetName+"${SANDBOX_SUFFIX}.js";
-        document.body.appendChild(s);
-      }
+      if (widgetName == undefined) {document.body.innerHTML+="Widget ID not specified."}
+
+      const s = document.createElement('script');
+      s.type = "module";
+      s.src = widgetName+"${SANDBOX_SUFFIX}.js";
+      document.body.appendChild(s);
       </script>
     `,
       filename: 'index.html',
@@ -127,7 +116,7 @@ if (isProd) {
     hot: true,
     compress: true,
     watchFiles: ['src/*'],
-    headers: (req, res, context) => {
+    headers: (req, _res, _context) => {
       const allowedOrigins = [
         'https://www.remnote.com',
         'https://remnote.com',
