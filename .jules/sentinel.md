@@ -1,0 +1,6 @@
+## 2025-02-27 - DOM-based XSS in Widget Loader
+**Vulnerability:** A DOM-based XSS vulnerability existed in `webpack.config.js` via `HtmlWebpackPlugin`. The injected HTML template read the `widgetName` parameter directly from the URL query string and interpolated it into `document.body.innerHTML += ...` when `widgetName` was not specified (or manipulated). Furthermore, there was no validation that the provided `widgetName` was legitimate before appending a dynamically created `<script>` tag.
+**Learning:** Even internal build tool configurations that inject code into development/sandbox environments must safely handle user-supplied data like URL parameters. Using `innerHTML` for appending error messages with unescaped URL parameters is a classic XSS vector.
+**Prevention:**
+1. Use `document.body.textContent` instead of `innerHTML` when rendering user-supplied strings or error messages.
+2. Implement an allowlist to explicitly validate parameters used in dynamic script inclusion. Generate this list at build-time (e.g., parsing available entry points) and inject it as a static JSON array into the template for runtime validation.
