@@ -1,0 +1,5 @@
+## 2025-02-20 - Fix DOM XSS via unvalidated widget script inclusion in Webpack HtmlWebpackPlugin
+
+**Vulnerability:** DOM-based Cross-Site Scripting (XSS) in `webpack.config.js`. The `HtmlWebpackPlugin` template read the `widgetName` parameter from the URL query string (`window.location.search`) and directly inserted it into the `src` attribute of a dynamic `<script>` tag without any validation. Additionally, it used `innerHTML` to display error messages with the unvalidated input.
+**Learning:** Build-time configuration files like Webpack config can introduce runtime vulnerabilities if they generate HTML templates that improperly handle URL parameters or user inputs directly on the client side.
+**Prevention:** Always validate runtime URL parameters against a strict allowlist (e.g., passing dynamically generated valid endpoints via Webpack plugin options) before using them to fetch scripts or render content. Additionally, always use `textContent` instead of `innerHTML` when rendering unvalidated text from the URL to prevent script injection.
