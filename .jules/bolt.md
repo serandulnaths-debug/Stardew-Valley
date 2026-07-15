@@ -1,0 +1,3 @@
+## 2024-05-17 - RemNote SDK IPC Bottleneck in `onActivate`
+**Learning:** Independent asynchronous registrations in `onActivate` (like settings, commands, and widgets) execute via IPC and require round-trips to the parent window. Awaiting these sequentially creates a performance bottleneck during plugin initialization.
+**Action:** Use `Promise.all` to group and execute these independent SDK registration calls concurrently, significantly reducing the total activation time.
