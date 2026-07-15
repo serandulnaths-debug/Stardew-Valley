@@ -1,3 +1,0 @@
-## 2024-07-15 - Unconfigured Plugin Settings UX
-**Learning:** In RemNote plugins, settings retrieved via `useTracker` (like `plugin.settings.getSetting`) do not have an asynchronous loading phase where they might be safely checked for `undefined` before rendering. If they are `undefined`, it simply means the user has not configured the setting yet. When interpolating these settings directly into strings (e.g., `Hi {name}`), it can lead to awkward blank spaces and poor UX if left unhandled.
-**Action:** Always provide sensible fallback values (e.g., `name || 'User'` or `favoriteNumber ?? 0`) for user-configurable plugin settings to ensure a graceful "empty state" until the user explicitly sets them.
