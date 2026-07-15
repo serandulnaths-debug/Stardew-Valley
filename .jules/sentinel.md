@@ -1,0 +1,4 @@
+## 2026-07-15 - DOM-based XSS in Webpack Dev Server Configuration
+**Vulnerability:** The dev server `index.html` template in `webpack.config.js` directly used the `widgetName` query parameter in a dynamically created `<script src="...">` tag without validation, and previously could have used `innerHTML`.
+**Learning:** Build-time configuration tools (like Webpack templates) frequently handle user input (like query params) during local development. If not careful, these can introduce DOM XSS vulnerabilities, which while scoped to local dev, still pose security risks when shared links are clicked.
+**Prevention:** Always validate user input (such as `widgetName`) against a strict allowlist (e.g., dynamically generated at build time using `glob`) before using it in any potentially dangerous sink like a script `src` or `innerHTML`. Use safer alternatives like `textContent`.
