@@ -1,0 +1,3 @@
+## 2024-07-17 - Concurrent IPC Plugin Activation
+**Learning:** Independent asynchronous registrations in RemNote's plugin `onActivate` function (like settings, commands, and widgets) require round-trips to the parent window via IPC. Awaiting these operations sequentially blocks execution and delays the plugin's startup time significantly.
+**Action:** Always group these independent SDK registration calls inside a single `Promise.all` to execute them concurrently for faster initial plugin activation.
