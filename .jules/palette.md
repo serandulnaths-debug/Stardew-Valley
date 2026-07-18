@@ -1,0 +1,3 @@
+## 2024-03-24 - Settings Initialization without Async Loading State
+**Learning:** RemNote plugin settings loaded via `useTracker` (e.g., `plugin.settings.getSetting`) do not have an initial async loading phase where they return `undefined` while loading. If they return `undefined`, it simply means the setting is genuinely unset by the user. Rendering components that assume these values exist can lead to poor empty states.
+**Action:** Always provide fallback default values (e.g., `name || 'User'`) when querying settings rather than rendering loading states, ensuring immediate and consistent UX even before user configuration.
