@@ -1,0 +1,4 @@
+## 2025-02-27 - DOM-based XSS via Webpack Template
+**Vulnerability:** The `HtmlWebpackPlugin` template directly used the `widgetName` query parameter to construct a `<script>` source URL without any validation, allowing an attacker to inject an arbitrary external or local script into the sandboxed plugin context.
+**Learning:** Even internal build configurations (like Webpack templates for plugins) are vulnerable to standard DOM XSS if they reflect user input directly into the DOM, especially when generating generic sandbox containers.
+**Prevention:** Always validate URL parameters against a predefined allowlist (in this case, dynamically resolving actual plugin chunk names) before interpolating them into HTML structures.
