@@ -16,14 +16,14 @@ const fastRefresh = isDevelopment ? new ReactRefreshWebpackPlugin() : null;
 
 const SANDBOX_SUFFIX = '-sandbox';
 
+const validWidgetNames = glob.sync('./src/widgets/**/*.tsx').map((el) => {
+  return path.relative('src/widgets', el).replace(/\.[tj]sx?$/, '').replace(/\\/g, '/');
+});
+
 const config = {
   mode: isProd ? 'production' : 'development',
-  entry: glob.sync('./src/widgets/**/*.tsx').reduce((obj, el) => {
-    const rel = path
-      .relative('src/widgets', el)
-      .replace(/\.[tj]sx?$/, '')
-      .replace(/\\/g, '/');
-
+  entry: validWidgetNames.reduce((obj, rel) => {
+    const el = './src/widgets/' + rel + '.tsx';
     obj[rel] = el;
     obj[`${rel}${SANDBOX_SUFFIX}`] = el;
     return obj;
@@ -65,13 +65,20 @@ const config = {
           filename: '[name].css',
         }),
     new HtmlWebpackPlugin({
-      templateContent: `
+      validWidgetNames: JSON.stringify(validWidgetNames),
+      templateContent: ({ htmlWebpackPlugin }) => `
       <body></body>
       <script type="text/javascript">
       const urlSearchParams = new URLSearchParams(window.location.search);
       const queryParams = Object.fromEntries(urlSearchParams.entries());
       const widgetName = queryParams["widgetName"];
       if (widgetName == undefined) {document.body.innerHTML+="Widget ID not specified."}
+
+      const validWidgetNames = ${htmlWebpackPlugin.options.validWidgetNames};
+      if (!validWidgetNames.includes(widgetName)) {
+        document.body.innerHTML += "Invalid Widget ID.";
+        throw new Error("Invalid Widget ID.");
+      }
 
       const s = document.createElement('script');
       s.type = "module";

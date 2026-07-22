@@ -1,0 +1,4 @@
+## 2024-05-24 - DOM-based XSS and Path Traversal in Webpack HtmlWebpackPlugin
+**Vulnerability:** `HtmlWebpackPlugin` took the `widgetName` parameter directly from the URL query string and injected it into a dynamically generated `<script>` tag's `src` attribute without any validation. This allows attackers to perform DOM-based XSS or Path Traversal by manipulating the `widgetName` parameter.
+**Learning:** Build configurations that dynamically generate HTML based on URL parameters run in the browser just like application code and are susceptible to client-side vulnerabilities.
+**Prevention:** Always extract an allowlist of valid files (e.g. using `glob`) during the build process, pass this allowlist into the HTML template, and strictly validate any dynamically provided input against the allowlist before using it in sensitive contexts like `<script>` injection.
