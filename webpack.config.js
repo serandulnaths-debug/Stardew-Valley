@@ -16,6 +16,13 @@ const fastRefresh = isDevelopment ? new ReactRefreshWebpackPlugin() : null;
 
 const SANDBOX_SUFFIX = '-sandbox';
 
+const validWidgetNames = glob.sync('./src/widgets/**/*.tsx').map((el) => {
+  return path
+    .relative('src/widgets', el)
+    .replace(/\.[tj]sx?$/, '')
+    .replace(/\\/g, '/');
+});
+
 const config = {
   mode: isProd ? 'production' : 'development',
   entry: glob.sync('./src/widgets/**/*.tsx').reduce((obj, el) => {
@@ -71,12 +78,18 @@ const config = {
       const urlSearchParams = new URLSearchParams(window.location.search);
       const queryParams = Object.fromEntries(urlSearchParams.entries());
       const widgetName = queryParams["widgetName"];
-      if (widgetName == undefined) {document.body.innerHTML+="Widget ID not specified."}
+      const validWidgets = ${JSON.stringify(validWidgetNames)};
 
-      const s = document.createElement('script');
-      s.type = "module";
-      s.src = widgetName+"${SANDBOX_SUFFIX}.js";
-      document.body.appendChild(s);
+      if (widgetName == undefined) {
+        document.body.innerHTML+="Widget ID not specified.";
+      } else if (!validWidgets.includes(widgetName)) {
+        document.body.innerHTML+="Invalid Widget ID specified.";
+      } else {
+        const s = document.createElement('script');
+        s.type = "module";
+        s.src = widgetName+"${SANDBOX_SUFFIX}.js";
+        document.body.appendChild(s);
+      }
       </script>
     `,
       filename: 'index.html',
@@ -115,7 +128,7 @@ if (isProd) {
     hot: true,
     compress: true,
     watchFiles: ['src/*'],
-    headers: (req, res, context) => {
+    headers: (req, _res, _context) => {
       const allowedOrigins = [
         'https://www.remnote.com',
         'https://remnote.com',
