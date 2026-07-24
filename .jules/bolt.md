@@ -1,0 +1,3 @@
+## 2024-07-24 - Concurrent Plugin SDK Registrations
+**Learning:** RemNote Plugin SDK registrations (like settings, commands, and widgets) communicate with the parent window via IPC. Doing these sequentially inside `onActivate` causes unnecessary round-trip latency, slowing down plugin initialization.
+**Action:** Always group independent SDK registration calls inside `onActivate` into a single `Promise.all` to batch them concurrently.
