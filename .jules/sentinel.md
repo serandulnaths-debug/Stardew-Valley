@@ -1,0 +1,4 @@
+## 2025-02-21 - [Fix XSS in widgetName parameter]
+**Vulnerability:** A DOM-based Cross-Site Scripting (XSS) vulnerability existed where the `widgetName` query parameter was read directly and embedded into a `<script src="...">` tag inside the generated `index.html` by `HtmlWebpackPlugin` without any validation.
+**Learning:** The vulnerability existed because the Webpack configuration did not enforce that the dynamically provided `widgetName` corresponded to an actual widget built into the project. It assumed safe input, allowing arbitrary URL inclusion.
+**Prevention:** Always validate external inputs before reflecting them into the DOM, especially into executable contexts like `<script>` source URLs. An allowlist based on the known valid entries (`src/widgets/*.tsx`) is the most robust way to prevent this class of arbitrary inclusion vulnerabilities.
