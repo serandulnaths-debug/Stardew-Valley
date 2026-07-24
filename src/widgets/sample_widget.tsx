@@ -1,4 +1,3 @@
-// @ts-ignore: TS2305
 import { usePlugin, renderWidget, useTracker } from '@remnote/plugin-sdk';
 
 export const SampleWidget = () => {
