@@ -65,20 +65,30 @@ const config = {
           filename: '[name].css',
         }),
     new HtmlWebpackPlugin({
-      templateContent: `
+      templateContent: () => {
+        const validWidgets = glob.sync('./src/widgets/**/*.tsx').map((el) => {
+          return path.relative('src/widgets', el).replace(/\.[tj]sx?$/, '').replace(/\\/g, '/');
+        });
+        return `
       <body></body>
       <script type="text/javascript">
       const urlSearchParams = new URLSearchParams(window.location.search);
       const queryParams = Object.fromEntries(urlSearchParams.entries());
       const widgetName = queryParams["widgetName"];
-      if (widgetName == undefined) {document.body.innerHTML+="Widget ID not specified."}
-
-      const s = document.createElement('script');
-      s.type = "module";
-      s.src = widgetName+"${SANDBOX_SUFFIX}.js";
-      document.body.appendChild(s);
+      const validWidgets = ${JSON.stringify(validWidgets)};
+      if (widgetName == undefined) {
+        document.body.innerHTML+="Widget ID not specified.";
+      } else if (!validWidgets.includes(widgetName)) {
+        document.body.innerHTML+="Invalid Widget ID.";
+      } else {
+        const s = document.createElement('script');
+        s.type = "module";
+        s.src = widgetName+"${SANDBOX_SUFFIX}.js";
+        document.body.appendChild(s);
+      }
       </script>
-    `,
+    `;
+      },
       filename: 'index.html',
       inject: false,
     }),
@@ -115,7 +125,7 @@ if (isProd) {
     hot: true,
     compress: true,
     watchFiles: ['src/*'],
-    headers: (req, res, context) => {
+    headers: (req, _res, _context) => {
       const allowedOrigins = [
         'https://www.remnote.com',
         'https://remnote.com',
