@@ -26,6 +26,7 @@ async function onActivate(plugin: ReactRNPlugin) {
   await plugin.app.registerCommand({
     id: 'editor-command',
     name: 'Editor Command',
+      // deno-lint-ignore require-await
     action: async () => {
       plugin.editor.insertPlainText('Hello World!');
     },
