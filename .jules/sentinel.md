@@ -1,0 +1,4 @@
+## 2024-05-18 - Fix DOM XSS in Webpack Dev Server Sandbox
+**Vulnerability:** A DOM-based XSS (Client-Side Script Inclusion) was present in `webpack.config.js` via the `HtmlWebpackPlugin` template block, where the `widgetName` query string parameter was directly concatenated into a dynamically generated `<script src="...">` tag without validation.
+**Learning:** The initial setup used this pattern for local testing to hot-load sandboxed components, relying dynamically on the URI parameter. It exposed users opening crafted `http://127.0.0.1:8080/?widgetName=...` URLs to XSS locally.
+**Prevention:** Always strictly validate or sanitize dynamic variables read from the URI (like `window.location.search`) before using them in DOM sinks such as element creation or `innerHTML`. Ensure allowlists match the expected inputs.
