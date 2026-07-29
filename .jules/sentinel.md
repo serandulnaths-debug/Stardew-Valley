@@ -1,0 +1,4 @@
+## 2025-02-14 - Fix DOM-based XSS in Webpack widget loader
+**Vulnerability:** DOM-based Cross-Site Scripting (XSS). The `widgetName` URL parameter was being directly interpolated into a `<script src="...">` tag without any validation by `HtmlWebpackPlugin` in `webpack.config.js`.
+**Learning:** Build-time configuration tools like Webpack plugins can introduce runtime vulnerabilities if they generate HTML that blindly trusts URL parameters. This was likely done for dynamic widget loading in a sandbox, but overlooked the security implication of arbitrary script injection.
+**Prevention:** Always validate and sanitize user input, even in sandbox environments. When dynamically loading chunks based on URL parameters, use an allowlist of known chunks (extracted from the Webpack entry points at build time) rather than directly trusting the input.
