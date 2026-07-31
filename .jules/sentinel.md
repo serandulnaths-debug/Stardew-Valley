@@ -1,0 +1,4 @@
+## 2024-05-18 - Fix DOM-based XSS in Webpack Dev Server Sandbox
+**Vulnerability:** The `widgetName` query parameter was directly interpolated into a `<script src="...">` tag without any validation in the `HtmlWebpackPlugin` template inside `webpack.config.js`. This allows an attacker to execute arbitrary JavaScript (DOM-based XSS or Client-Side Script Inclusion) if a user visits a maliciously crafted URL on the local dev server.
+**Learning:** Development servers and sandbox templates often bypass standard security practices because they are not considered "production". However, since developers run this server locally and it binds to a port, it can still be exploited via CSRF or direct link sharing if vulnerabilities exist.
+**Prevention:** Always validate user input (including query parameters) against a strict allowlist before interpolating it into the DOM, especially when generating `<script>` tags, even in development tooling.
